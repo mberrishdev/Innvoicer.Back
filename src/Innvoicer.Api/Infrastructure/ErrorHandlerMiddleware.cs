@@ -33,6 +33,7 @@ public class ErrorHandlerMiddleware
                 NotValidException => (int)HttpStatusCode.BadRequest,
                 ObjectAlreadyExistException => (int)HttpStatusCode.Conflict,
                 CommandValidationException => (int)HttpStatusCode.BadRequest,
+                InvalidCredentialsException => (int)HttpStatusCode.BadRequest,
                 ApplicationException => (int)HttpStatusCode.BadRequest,
                 Domain.Exceptions.CommandValidationException => (int)HttpStatusCode.BadRequest,
                 Domain.Exceptions.DomainException => (int)HttpStatusCode.BadRequest,

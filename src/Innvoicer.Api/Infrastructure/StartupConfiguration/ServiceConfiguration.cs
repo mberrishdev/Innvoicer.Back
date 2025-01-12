@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using System.Text;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -7,9 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Innvoicer.Api.Filters;
 using Innvoicer.Api.Infrastructure.Options;
 using Innvoicer.Application;
+using Innvoicer.Domain;
 using Innvoicer.Infrastructure;
 using Innvoicer.Persistence;
 using Innvoicer.Persistence.Database;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace Innvoicer.Api.Infrastructure.StartupConfiguration;
 
@@ -49,6 +54,7 @@ public static class ServiceConfiguration
 
         services.AddLogging();
 
+        services.AddAuthentication();
         return builder;
     }
 
@@ -81,11 +87,93 @@ public static class ServiceConfiguration
         services.ConfigureOptions<ConfigureSwaggerOptions>()
             .AddSwaggerGen(swagger =>
             {
+                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description =
+                        "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer w9ADFAqio8bjzlao10385Adjeb\"",
+                });
+
+                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+
                 // Set the comments path for the Swagger JSON and UI.
                 // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 // swagger.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
                 swagger.DocumentFilter<HealthChecksFilter>();
+            });
+
+        return services;
+    }
+
+    #endregion
+
+    #region Authentication
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var tokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["AuthSettings:SecretKey"] ?? "")),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["AuthSettings:ValidIssuer"],
+            ValidAudience = configuration["AuthSettings:ValidAudience"],
+            RequireExpirationTime = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+            {
+                var now = DateTimeHelper.Now;
+                return (notBefore <= now) && (expires >= now);
+            }
+        };
+
+        services.AddSingleton(tokenValidationParameters);
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = tokenValidationParameters;
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/chatHub")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         return services;

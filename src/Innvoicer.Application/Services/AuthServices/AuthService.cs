@@ -12,14 +12,16 @@ using Innvoicer.Application.Contracts.AuthServices;
 using Innvoicer.Application.Contracts.AuthServices.Models;
 using Innvoicer.Application.Exceptions;
 using Innvoicer.Application.Helpers;
+using Innvoicer.Application.Settings;
 using Innvoicer.Domain;
 using Innvoicer.Domain.Entities.Users;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Innvoicer.Application.Services.AuthServices;
 
-public class AuthService(IQueryRepository<User> userRepository) : IAuthService
+public class AuthService(IQueryRepository<User> userRepository, IOptions<AuthSettings> authSettings) : IAuthService
 {
     public async Task<AuthResponse> Authorize(AuthRequest authRequest, CancellationToken cancellationToken)
     {
@@ -36,10 +38,10 @@ public class AuthService(IQueryRepository<User> userRepository) : IAuthService
 
         var claims = GetClaims(user);
 
-        const string secretKey = "8AAF3A95AF6EF22591D16AB8823A9B5BE72159BCE8953DB7FA6198C29C";
-        const string validIssuer = "http://localhost:4200";
-        const string validAudience = "http://localhost:4200";
-        const int tokenExpirationMinutes = 60;
+        var secretKey = authSettings.Value.SecretKey;
+        var validIssuer = authSettings.Value.ValidIssuer;
+        var validAudience = authSettings.Value.ValidAudience;
+        var tokenExpirationMinutes = authSettings.Value.TokenExpirationMinutes;
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var signInCred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
