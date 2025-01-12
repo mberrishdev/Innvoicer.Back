@@ -1,4 +1,5 @@
 ﻿using Innvoicer.Domain.Companies;
+using Innvoicer.Domain.Entities.Services;
 using Innvoicer.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Company> Companies { get; set; }
     public DbSet<CompanyBankAccount> CompanyBankAccounts { get; set; }
+    public DbSet<Service> Services { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

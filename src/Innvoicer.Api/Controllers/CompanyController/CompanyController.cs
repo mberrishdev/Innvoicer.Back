@@ -1,14 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Innvoicer.Application.Contracts.AuthServices;
-using Innvoicer.Application.Contracts.AuthServices.Models;
-using Innvoicer.Application.Features.Companies.Queries;
+﻿using Innvoicer.Application.Features.Companies.Queries;
 using Innvoicer.Application.Features.Companies.Queries.Models;
-using Innvoicer.Application.Helpers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Innvoicer.Api.Controllers.CompanyController;
@@ -23,6 +16,6 @@ public class CompanyController(IMediator mediator) : ApiControllerBase(mediator)
     [ProducesResponseType(typeof(List<CompanyModel>), StatusCodes.Status200OK)]
     public ActionResult<List<CompanyModel>> GetList(CancellationToken cancellationToken)
     {
-        return Ok(mediator.Send(new ListCompanyByUserIdQuery(UserModel.UserId), cancellationToken));
+        return Ok(mediator.Send(new ListCompanyByUserIdQuery(UserModel!.UserId), cancellationToken));
     }
 }
