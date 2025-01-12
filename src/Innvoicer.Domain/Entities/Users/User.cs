@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Innvoicer.Domain.Companies;
 using Innvoicer.Domain.Entities.Users.Commands;
 using Innvoicer.Domain.Primitives;
 
@@ -15,6 +17,9 @@ public class User : Entity<long>
     [Required] public DateTime CreatedAt { get; private set; }
 
     public DateTime? UpdatedAt { get; private set; }
+
+    public ICollection<Company>
+        Companies { get; private set; }
 
     private User()
     {

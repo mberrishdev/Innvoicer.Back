@@ -1,3 +1,5 @@
+using Innvoicer.Api.Filters;
+using Innvoicer.Domain.Primitives;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
@@ -7,6 +9,7 @@ namespace Innvoicer.Api.Controllers;
 /// Base Controller
 /// </summary>
 [ApiController]
+[UserActionFilter]
 [Produces("application/json")]
 public class ApiControllerBase : ControllerBase
 {
@@ -14,6 +17,8 @@ public class ApiControllerBase : ControllerBase
     /// IMediator
     /// </summary>
     protected readonly IMediator Mediator;
+
+    public UserModel? UserModel { get; set; } = null;
 
     /// <summary>
     /// ApiControllerBase Constructor
