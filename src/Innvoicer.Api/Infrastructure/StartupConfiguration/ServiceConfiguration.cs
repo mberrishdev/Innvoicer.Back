@@ -191,15 +191,21 @@ public static class ServiceConfiguration
             options.AddDefaultPolicy(
                 policyBuilder =>
                 {
-                    string? allowedOrigins = configuration.GetValue<string>("CorsAllowedOrigins");
-                    if (string.IsNullOrEmpty(allowedOrigins) || (allowedOrigins == "*" && environment.IsDevelopment()))
+                    var allowedOrigins = configuration.GetValue<string>("CorsAllowedOrigins");
+
+                    if (string.IsNullOrEmpty(allowedOrigins) || allowedOrigins == "*")
                     {
-                        policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                        policyBuilder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
                     }
                     else
                     {
-                        policyBuilder.WithOrigins(allowedOrigins.Split(";"))
-                            .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                        var origins = allowedOrigins.Split(";", StringSplitOptions.RemoveEmptyEntries);
+                        policyBuilder.WithOrigins(origins)
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
                     }
                 });
         });
