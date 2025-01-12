@@ -1,3 +1,5 @@
+using System;
+
 namespace Innvoicer.Application.Contracts.AuthServices.Models;
 
 public class AuthResponse

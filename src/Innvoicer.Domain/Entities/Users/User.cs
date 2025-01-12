@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Innvoicer.Domain.Entities.Users.Commands;
 using Innvoicer.Domain.Primitives;

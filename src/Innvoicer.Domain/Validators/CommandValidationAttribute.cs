@@ -1,4 +1,6 @@
-﻿namespace Innvoicer.Domain.Validators;
+﻿using System;
+
+namespace Innvoicer.Domain.Validators;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class CommandValidationAttribute : Attribute

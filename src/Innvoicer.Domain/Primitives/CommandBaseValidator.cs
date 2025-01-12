@@ -1,4 +1,5 @@
-﻿using Innvoicer.Domain.Validators;
+﻿using System.Linq;
+using Innvoicer.Domain.Validators;
 
 namespace Innvoicer.Domain.Primitives;
 
