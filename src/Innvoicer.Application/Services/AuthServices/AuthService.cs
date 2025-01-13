@@ -28,7 +28,7 @@ public class AuthService(IQueryRepository<User> userRepository, IOptions<AuthSet
         const string invalidCredentials = "Invalid credentials.";
 
         var user = await userRepository.GetAsync(
-            x => x.Email.Equals(authRequest.Email, StringComparison.CurrentCultureIgnoreCase),
+            x => x.Email.ToLower() == authRequest.Email.ToLower(),
             cancellationToken: cancellationToken);
 
         if (!HashHelper.Hash(authRequest.Password).Equals(user.Password))
