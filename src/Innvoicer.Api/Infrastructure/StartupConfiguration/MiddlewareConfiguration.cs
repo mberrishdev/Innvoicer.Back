@@ -48,17 +48,15 @@ public static class MiddlewareConfiguration
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
+        app.UseEndpoints(endpoints => { });
+
+        app.MapControllers();
+
+        app.MapHealthChecks("/health", new HealthCheckOptions()
         {
-            endpoints.MapControllers();
-
-            endpoints.MapHealthChecks("/health", new HealthCheckOptions()
-            {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         });
-
         return app;
     }
 

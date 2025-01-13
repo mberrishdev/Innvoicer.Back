@@ -23,8 +23,8 @@ public class ServiceController(IMediator mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("{companyId}")]
     [ProducesResponseType(typeof(List<ServiceModel>), StatusCodes.Status200OK)]
-    public ActionResult<List<CompanyModel>> GetList(long companyId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<CompanyModel>>> GetList(long companyId, CancellationToken cancellationToken)
     {
-        return Ok(mediator.Send(new ListServiceByCompanyIdQuery(companyId), cancellationToken));
+        return Ok(await mediator.Send(new ListServiceByCompanyIdQuery(companyId), cancellationToken));
     }
 }

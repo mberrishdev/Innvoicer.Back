@@ -14,7 +14,11 @@ public static class DependencyInjection
         services.AddEfCoreDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(configuration.GetConnectionString("Innvoicer") ?? "",
-                    x => x.UseNetTopologySuite());
+                    x =>
+                    {
+                        x.UseNetTopologySuite();
+                        x.CommandTimeout(20);
+                    });
             },
             repositoryOptions: options => { options.SaveChangeStrategy = SaveChangeStrategy.PerOperation; });
 

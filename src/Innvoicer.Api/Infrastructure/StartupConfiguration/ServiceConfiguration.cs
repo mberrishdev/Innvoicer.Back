@@ -1,10 +1,6 @@
 ﻿using System.Text;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Innvoicer.Api.Filters;
 using Innvoicer.Api.Infrastructure.Options;
 using Innvoicer.Application;
@@ -40,6 +36,8 @@ public static class ServiceConfiguration
 
         #endregion
 
+        services.AddAuthentication(configuration);
+
         services.AddControllers();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,7 +52,6 @@ public static class ServiceConfiguration
 
         services.AddLogging();
 
-        services.AddAuthentication();
         return builder;
     }
 
