@@ -11,17 +11,20 @@ using Common.Repository.Repository;
 using Innvoicer.Application.Contracts.AuthServices;
 using Innvoicer.Application.Contracts.AuthServices.Models;
 using Innvoicer.Application.Exceptions;
+using Innvoicer.Application.Features.Companies.Queries;
 using Innvoicer.Application.Helpers;
 using Innvoicer.Application.Settings;
 using Innvoicer.Domain;
 using Innvoicer.Domain.Entities.Users;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Innvoicer.Application.Services.AuthServices;
 
-public class AuthService(IQueryRepository<User> userRepository, IOptions<AuthSettings> authSettings) : IAuthService
+public class AuthService(IQueryRepository<User> userRepository, IMediator mediator,
+    IOptions<AuthSettings> authSettings) : IAuthService
 {
     public async Task<AuthResponse> Authorize(AuthRequest authRequest, CancellationToken cancellationToken)
     {
@@ -54,8 +57,7 @@ public class AuthService(IQueryRepository<User> userRepository, IOptions<AuthSet
             expires: DateTimeHelper.Now.AddMinutes(tokenExpirationMinutes),
             signingCredentials: signInCred);
 
-        var randomNumber = new byte[32];
-
+        var company = await mediator.Send(new ListCompanyByUserIdQuery(user.Id), cancellationToken);
         return new AuthResponse
         {
             UserId = user.Id,
@@ -64,6 +66,7 @@ public class AuthService(IQueryRepository<User> userRepository, IOptions<AuthSet
             Email = user.Email,
             Expires = DateTime.UtcNow.AddMinutes(tokenExpirationMinutes),
             Token = new JwtSecurityTokenHandler().WriteToken(jwt),
+            Companies = company,
         };
     }
 

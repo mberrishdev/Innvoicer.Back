@@ -1,4 +1,4 @@
-using System;
+using Innvoicer.Application.Features.Companies.Queries.Models;
 
 namespace Innvoicer.Application.Contracts.AuthServices.Models;
 
@@ -10,4 +10,5 @@ public class AuthResponse
     public required string Email { get; set; }
     public DateTime Expires { get; set; }
     public required string Token { get; set; }
+    public List<CompanyModel> Companies { get; set; }
 }
