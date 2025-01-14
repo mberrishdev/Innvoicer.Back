@@ -24,9 +24,16 @@ public class AuthController(IMediator mediator, IAuthService authService) : ApiC
     }
 
     [HttpGet("hash")]
-    [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
-    public ActionResult<AuthResponse> GetHash([FromQuery] string str)
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public ActionResult GetHash([FromQuery] string str)
     {
         return Ok(HashHelper.Hash(str));
+    }
+
+    [HttpGet("hash2")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    public ActionResult GetHash2([FromQuery] string str)
+    {
+        return Ok(HashHelper.HashFNV1a(str));
     }
 }

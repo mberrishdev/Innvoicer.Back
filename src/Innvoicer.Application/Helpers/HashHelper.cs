@@ -21,4 +21,23 @@ public static class HashHelper
 
         return sb.ToString();
     }
+    
+    public static string HashFNV1a(string str, string? salt = null)
+    {
+        if (!string.IsNullOrEmpty(salt))
+        {
+            str += salt;
+        }
+
+        const uint fnvPrime = 0x811C9DC5;
+        var hash = 0x811C9DC5;
+
+        foreach (var c in str)
+        {
+            hash ^= c;
+            hash *= fnvPrime;
+        }
+
+        return hash.ToString("X");
+    }
 }

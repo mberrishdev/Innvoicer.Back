@@ -7,6 +7,7 @@ namespace Innvoicer.Domain.Entities.Invoices.Commands;
 public class CreateInvoiceCommand : CommandBase<long>
 {
     [JsonIgnore] public string? Number { get; set; }
+    [JsonIgnore] public string? Key { get; set; }
 
     public long CompanyId { get; set; }
 

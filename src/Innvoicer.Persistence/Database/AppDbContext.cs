@@ -48,6 +48,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             .HasForeignKey(ii => ii.InvoiceId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<Invoice>()
+            .HasIndex(r => r.Key)
+            .IsUnique();
+
         base.OnModelCreating(modelBuilder);
     }
 }

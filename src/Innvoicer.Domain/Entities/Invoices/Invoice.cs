@@ -7,6 +7,7 @@ namespace Innvoicer.Domain.Entities.Invoices;
 
 public class Invoice : Entity<long>
 {
+    [Required] public string Key { get; private set; }
     [Required] public string Number { get; private set; }
 
     [Required] public long CompanyId { get; private set; }
@@ -33,6 +34,7 @@ public class Invoice : Entity<long>
 
     public Invoice(CreateInvoiceCommand command)
     {
+        Key = command.Key;
         Number = command.Number!;
         CompanyId = command.CompanyId;
         IssueDate = command.IssueDate;
