@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Innvoicer.Domain.Companies;
 using Innvoicer.Domain.Entities.Clients;
 using Innvoicer.Domain.Entities.Invoices.Commands;
 using Innvoicer.Domain.Primitives;
@@ -27,6 +28,7 @@ public class Invoice : Entity<long>
     public DateTime? UpdatedAt { get; private set; }
 
     public Client Client { get; private set; }
+    public Company Company { get; private set; }
 
     private Invoice()
     {
@@ -34,7 +36,7 @@ public class Invoice : Entity<long>
 
     public Invoice(CreateInvoiceCommand command)
     {
-        Key = command.Key;
+        Key = command.Key!;
         Number = command.Number!;
         CompanyId = command.CompanyId;
         IssueDate = command.IssueDate;
@@ -44,6 +46,18 @@ public class Invoice : Entity<long>
         CreatedAt = DateTimeHelper.Now;
         Items = command.Items.Select(item => new InvoiceItem(item)).ToList();
         Client = new Client(command.Client);
+        TotalAmount = Items.Sum(x => x.TotalPrice);
+    }
+
+    public void Update(UpdateInvoiceCommand command)
+    {
+        CompanyId = command.CompanyId;
+        IssueDate = command.IssueDate;
+        DueDate = command.DueDate;
+        DepositAmount = command.DepositAmount;
+        UpdatedAt = DateTimeHelper.Now;
+        Items = command.Items.Select(item => new InvoiceItem(item)).ToList();
+        Client.Update(command.Client);
         TotalAmount = Items.Sum(x => x.TotalPrice);
     }
 }

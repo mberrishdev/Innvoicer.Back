@@ -11,7 +11,7 @@ public class CreateInvoiceCommandHandler(IRepository<Invoice> repository, IMedia
 {
     public async Task<long> Handle(CreateInvoiceCommand command, CancellationToken cancellationToken)
     {
-        //check companyId
+        //todo check companyId
         var lastInvoice =
             await repository.GetAsync(x => x.CompanyId == command.CompanyId, cancellationToken: cancellationToken);
         command.Number = lastInvoice?.Number?.ToString() ?? 1.ToString();

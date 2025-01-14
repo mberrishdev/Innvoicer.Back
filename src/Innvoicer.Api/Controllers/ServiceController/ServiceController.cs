@@ -21,10 +21,10 @@ namespace Innvoicer.Api.Controllers.ServiceController;
 [Route("v{version:apiVersion}/company")]
 public class ServiceController(IMediator mediator) : ApiControllerBase(mediator)
 {
-    [HttpGet("{companyId}")]
+    [HttpGet("{companyId:long}")]
     [ProducesResponseType(typeof(List<ServiceModel>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<CompanyModel>>> GetList(long companyId, CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new ListServiceByCompanyIdQuery(companyId), cancellationToken));
+        return Ok(await Mediator.Send(new ListServiceByCompanyIdQuery(companyId), cancellationToken));
     }
 }

@@ -24,6 +24,16 @@ public class Client : Entity<long>
     public Client(CreateClientCommand command)
     {
         Name = command.Name;
+        PersonalId = command.PersonalId;
+        Email = command.Email;
+        Phone = command.Phone;
+        Address = command.Address;
+    }
+
+    public void Update(UpdateClientCommand command)
+    {
+        Name = command.Name;
+        PersonalId = command.PersonalId;
         Email = command.Email;
         Phone = command.Phone;
         Address = command.Address;
