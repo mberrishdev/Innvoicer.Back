@@ -53,6 +53,7 @@ public class InvoiceController(IMediator mediator) : ApiControllerBase(mediator)
         return Ok(result);
     }
 
+    [AllowAnonymous]
     [HttpGet("key/{key}")]
     [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
     public async Task<ActionResult<InvoiceModel>> Get([Required, FromRoute] string key,
