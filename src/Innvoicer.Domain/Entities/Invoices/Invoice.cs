@@ -41,7 +41,7 @@ public class Invoice : Entity<long>
         CompanyId = command.CompanyId;
         IssueDate = command.IssueDate;
         DueDate = command.DueDate;
-        Status = InvoiceStatus.Pending;
+        Status = InvoiceStatus.Draft;
         DepositAmount = command.DepositAmount;
         CreatedAt = DateTimeHelper.Now;
         Items = command.Items.Select(item => new InvoiceItem(item)).ToList();
