@@ -42,9 +42,20 @@ public class ErrorHandlerMiddleware
                 _ => (int)HttpStatusCode.InternalServerError
             };
 
-            var result = JsonSerializer.Serialize(new { error.Message, error?.InnerException, error?.StackTrace });
-            if (response.StatusCode == 500)
-                result = JsonSerializer.Serialize(new { error.Message, error.StackTrace });
+            var result = JsonSerializer.Serialize(
+                new
+                {
+                    error?.Message,
+                    InEx = error?.InnerException?.Message ?? "", 
+                    error?.StackTrace
+                },
+                new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                }
+            );
+            // if (response.StatusCode == 500)
+            //     result = JsonSerializer.Serialize(new { error.Message, error.StackTrace.Mess });
 
             await response.WriteAsync(result);
         }
