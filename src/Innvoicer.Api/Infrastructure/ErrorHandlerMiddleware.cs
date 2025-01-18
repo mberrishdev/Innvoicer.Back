@@ -42,7 +42,7 @@ public class ErrorHandlerMiddleware
                 _ => (int)HttpStatusCode.InternalServerError
             };
 
-            var result = JsonSerializer.Serialize(new { error.Message });
+            var result = JsonSerializer.Serialize(new { error.Message, error.InnerException, error.StackTrace });
             if (response.StatusCode == 500)
                 result = JsonSerializer.Serialize(new { error.Message, error.StackTrace });
 
