@@ -23,7 +23,9 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace Innvoicer.Application.Services.AuthServices;
 
-public class AuthService(IQueryRepository<User> userRepository, IMediator mediator,
+public class AuthService(
+    IQueryRepository<User> userRepository,
+    IMediator mediator,
     IOptions<AuthSettings> authSettings) : IAuthService
 {
     public async Task<AuthResponse> Authorize(AuthRequest authRequest, CancellationToken cancellationToken)
@@ -33,6 +35,11 @@ public class AuthService(IQueryRepository<User> userRepository, IMediator mediat
         var user = await userRepository.GetAsync(
             x => x.Email.ToLower() == authRequest.Email.ToLower(),
             cancellationToken: cancellationToken);
+
+        if (user == null)
+        {
+            throw new InvalidCredentialsException(invalidCredentials);
+        }
 
         if (!HashHelper.Hash(authRequest.Password).Equals(user.Password))
         {
