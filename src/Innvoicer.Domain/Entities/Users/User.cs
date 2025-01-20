@@ -36,4 +36,12 @@ public class User : Entity<long>
 
         CreatedAt = DateTimeHelper.Now;
     }
+
+    public void UpdatePassword(UpdateUserPasswordCommand command)
+    {
+        command.Validate();
+
+        Password = command.NewPasswordHash;
+        UpdatedAt = DateTimeHelper.Now;
+    }
 }

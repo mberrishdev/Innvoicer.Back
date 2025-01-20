@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Innvoicer.Application.Contracts.AuthServices;
 using Innvoicer.Application.Contracts.AuthServices.Models;
 using Innvoicer.Application.Helpers;
+using Innvoicer.Domain.Entities.Users.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
