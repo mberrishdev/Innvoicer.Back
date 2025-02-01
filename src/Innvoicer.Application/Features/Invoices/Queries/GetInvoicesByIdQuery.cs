@@ -24,7 +24,7 @@ public class GetInvoicesByIdQueryHandler(IQueryRepository<Invoice> repository)
         };
 
         //todo check if company is user company
-        var invoice = await repository.GetAsync(predicate: x => x.Id == request.Id, rp,
+        var invoice = await repository.GetAsync(predicate: x => x.Id == request.Id && x.Status != InvoiceStatus.Deleted, rp,
                           cancellationToken: cancellationToken) ??
                       throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), request.Id);
 

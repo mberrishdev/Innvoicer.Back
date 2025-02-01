@@ -60,4 +60,16 @@ public class Invoice : Entity<long>
         Client.Update(command.Client);
         TotalAmount = Items.Sum(x => x.TotalPrice);
     }
+
+    public void Delete(DeleteInvoiceCommand command)
+    {
+        Status = InvoiceStatus.Deleted;
+        UpdatedAt = DateTimeHelper.Now;
+    }
+
+    public void Publish(PublishInvoiceCommand command)
+    {
+        Status = InvoiceStatus.Pending;
+        UpdatedAt = DateTimeHelper.Now;
+    }
 }

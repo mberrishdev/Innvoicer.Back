@@ -24,6 +24,7 @@ public class UpdateInvoiceCommandHandler(IRepository<Invoice> repository, IMedia
         var invoice = await repository.GetForUpdateAsync(x => x.Id == command.Id, rp, cancellationToken: cancellationToken)
                       ?? throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), command.Id);
 
+        
         //todo check status
 
         //todo check companyId

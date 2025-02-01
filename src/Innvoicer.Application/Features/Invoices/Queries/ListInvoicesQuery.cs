@@ -23,7 +23,8 @@ public class ListInvoicesQueryHandler(IQueryRepository<Invoice> repository)
         };
 
         //todo check if company is user company
-        var invoices = await repository.GetListAsync(rp, predicate: x => x.CompanyId == request.CompanyId,
+        var invoices = await repository.GetListAsync(rp,
+            predicate: x => x.CompanyId == request.CompanyId && x.Status != InvoiceStatus.Deleted,
             cancellationToken: cancellationToken);
 
         return invoices.Select(invoice => new InvoiceModel(invoice)).ToList();

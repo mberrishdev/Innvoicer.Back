@@ -63,4 +63,24 @@ public class InvoiceController(IMediator mediator) : ApiControllerBase(mediator)
         var result = await Mediator.Send(query, cancellationToken);
         return Ok(result);
     }
+
+    [HttpDelete("{id:long}")]
+    [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
+    public async Task<ActionResult<InvoiceModel>> Delete([Required, FromRoute] long id,
+        CancellationToken cancellationToken)
+    {
+        await Mediator.Send(new DeleteInvoiceCommand() { Id = id, UserModel = UserModel }, cancellationToken);
+        return Ok(id);
+    }
+
+    [HttpPut("publish/{id:long}")]
+    [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
+    public async Task<ActionResult<InvoiceModel>> Publish([Required, FromRoute] long id,
+        [Required, FromQuery] string url,
+        CancellationToken cancellationToken)
+    {
+        await Mediator.Send(new PublishInvoiceCommand() { Id = id, Url = url, UserModel = UserModel },
+            cancellationToken);
+        return Ok(id);
+    }
 }
