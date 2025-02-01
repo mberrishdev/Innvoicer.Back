@@ -72,4 +72,10 @@ public class Invoice : Entity<long>
         Status = InvoiceStatus.Pending;
         UpdatedAt = DateTimeHelper.Now;
     }
+
+    public void Complete(CompleteInvoiceCommand command)
+    {
+        Status = InvoiceStatus.Completed;
+        UpdatedAt = DateTimeHelper.Now;
+    }
 }

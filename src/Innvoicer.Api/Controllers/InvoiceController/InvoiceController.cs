@@ -83,4 +83,14 @@ public class InvoiceController(IMediator mediator) : ApiControllerBase(mediator)
             cancellationToken);
         return Ok(id);
     }
+
+    [HttpPut("complete/{id:long}")]
+    [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
+    public async Task<ActionResult<InvoiceModel>> Complete([Required, FromRoute] long id,
+        CancellationToken cancellationToken)
+    {
+        await Mediator.Send(new CompleteInvoiceCommand() { Id = id, UserModel = UserModel },
+            cancellationToken);
+        return Ok(id);
+    }
 }

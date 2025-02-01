@@ -9,20 +9,19 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace Innvoicer.Application.Features.Invoices.Commands;
 
-public class PublishInvoiceCommandHandler(IRepository<Invoice> repository, IMediator mediator)
-    : IRequestHandler<PublishInvoiceCommand>
+public class CompleteInvoiceCommandHandler(IRepository<Invoice> repository, IMediator mediator)
+    : IRequestHandler<CompleteInvoiceCommand>
 {
-    public async Task Handle(PublishInvoiceCommand command, CancellationToken cancellationToken)
+    public async Task Handle(CompleteInvoiceCommand command, CancellationToken cancellationToken)
     {
         var invoice = await repository.GetForUpdateAsync(x => x.Id == command.Id, cancellationToken: cancellationToken)
                       ?? throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), command.Id);
-        
-        if(invoice.Status != InvoiceStatus.Draft)
-            throw new InvalidOperationException("Invoice is not in draft status");
-        
-        invoice.Publish(command);
 
-        //send sms
+        if (invoice.Status != InvoiceStatus.Pending)
+            throw new InvalidOperationException("Invoice is not in pending status");
+
+        invoice.Complete(command);
+
         await repository.UpdateAsync(invoice, cancellationToken);
     }
 }
