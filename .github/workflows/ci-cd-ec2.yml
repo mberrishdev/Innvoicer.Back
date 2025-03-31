@@ -16,11 +16,11 @@ jobs:
 
       - name: Debug Secrets
         run: |
-          echo "AWS_ACCESS_KEY_ID is set: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}"
-          echo "AWS_SECRET_ACCESS_KEY is set: ${{ secrets.AWS_SECRET_ACCESS_KEY != '' }}"
-          echo "AWS_REGION is set: ${{ secrets.AWS_REGION != '' }}"
-          echo "EC2_SSH_KEY is set: ${{ secrets.EC2_SSH_KEY != '' }}"
-          echo "EC2_HOST is set: ${{ secrets.EC2_HOST != '' }}"
+          echo "AWS_ACCESS_KEY_ID is set: ${{ secrets.AWS_ACCESS_KEY_ID}}"
+          echo "AWS_SECRET_ACCESS_KEY is set: ${{ secrets.AWS_SECRET_ACCESS_KEY}}"
+          echo "AWS_REGION is set: ${{ secrets.AWS_REGION  }}"
+          echo "EC2_SSH_KEY is set: ${{ secrets.EC2_SSH_KEY }}"
+          echo "EC2_HOST is set: ${{ secrets.EC2_HOST }}"
 
       - name: Log in to AWS ECR
         run: |
