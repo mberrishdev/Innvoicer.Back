@@ -31,7 +31,7 @@ jobs:
 
       - name: Transfer files to EC2
         run: |
-          scp -r ./publish/* ubuntu@${{ secrets.EC2_IP }}:/var/www/dotnetapp/
+          scp -r ./publish/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/dotnetapp/
 
       - name: Restart the application on EC2
         run: |
