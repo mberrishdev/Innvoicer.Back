@@ -56,8 +56,12 @@ jobs:
 
       - name: Deploy to EC2 using SSH
         run: |
+          # Debugging step: Check if the private key exists
+          ls -l ~/.ssh
+          cat ~/.ssh/id_rsa
+          
           # Execute commands over SSH using EC2 Instance Connect
-          ssh -o StrictHostKeyChecking=no -T -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -v -o StrictHostKeyChecking=no -T -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             # Log in to ECR on EC2
             aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
