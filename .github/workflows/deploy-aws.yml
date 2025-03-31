@@ -20,7 +20,7 @@ jobs:
 
       - name: Create deployment directory on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             sudo mkdir -p /var/www/dotnetapp
             sudo chown -R ubuntu:ubuntu /var/www/dotnetapp
           EOF
@@ -35,7 +35,7 @@ jobs:
 
       - name: Restart the application on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
             sudo systemctl daemon-reload
             sudo systemctl restart myapp
           EOF
