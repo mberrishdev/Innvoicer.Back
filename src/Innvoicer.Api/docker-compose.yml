@@ -3,8 +3,8 @@ name: innvoicer-api
 
 services:
   api:
-    container_name: book-manager
-    image: book-manager:latest
+    container_name: innvoicer-api
+    image: innvoicer-api:latest
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+:8080
