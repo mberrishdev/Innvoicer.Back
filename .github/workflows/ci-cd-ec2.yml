@@ -40,25 +40,31 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
           chmod 600 private_key.pem
 
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # Log in to ECR on EC2
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
-            # Stop and remove existing container (if running)
-            docker stop innvoicer-api-prod || true
-            docker rm innvoicer-api-prod || true
-
-            # Pull latest image
-            docker pull 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod:latest
-
-            # Run new container
-            docker run -d -p 8080:8080 --name innvoicer-api-prod 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod:latest
-
-            # Cleanup old images
-            docker system prune -f
+      - name: Deploy to EC2 using Instance Connect
+        run: |
+            # Set up the temporary SSH key
+            aws ec2-instance-connect send-ssh-public-key \
+              --region eu-central-1 \
+              --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
+              --instance-os-user ubuntu \
+              --availability-zone ${{ secrets.AWS_AVAILABILITY_ZONE }} \
+              --ssh-public-key file://$HOME/.ssh/id_rsa.pub
+  
+            # Execute commands over SSH using EC2 Instance Connect
+            ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+              # Log in to ECR on EC2
+              aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 832753618517.dkr.ecr.eu-central-1.amazonaws.com
+  
+              # Stop and remove existing container (if running)
+              docker stop innvoicer-api-prod || true
+              docker rm innvoicer-api-prod || true
+  
+              # Pull latest image
+              docker pull 832753618517.dkr.ecr.eu-central-1.amazonaws.com/innvoicer-api-prod:latest
+  
+              # Run new container
+              docker run -d -p 8080:8080 --name innvoicer-api-prod 832753618517.dkr.ecr.eu-central-1.amazonaws.com/innvoicer-api-prod:latest
+  
+              # Cleanup old images
+              docker system prune -f
+            EOF
