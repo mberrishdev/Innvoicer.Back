@@ -1,0 +1,42 @@
+name: Deploy to EC2 using EC2 Instance Connect
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ${{ secrets.AWS_REGION }}
+
+      - name: Log in to AWS ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t innvoicer-api-prod .
+          docker tag innvoicer-api-prod:latest 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+          docker push 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+          
+      - name: Pull Docker image
+        run: sudo docker pull 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+
+      - name: Delete Old docker container
+        run: sudo docker rm -f innvoicer-api-prod-container || true
+
+      - name: Run Docker Container
+        run: |
+          sudo docker run -d -p 8080:8080 --name innvoicer-api-prod-container \
+          832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
