@@ -2,79 +2,30 @@ name: Deploy to EC2 using EC2 Instance Connect
 
 on:
   push:
-    branches:
-      - master
+     branches:
+       - master
   workflow_dispatch:
-
+ 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up AWS credentials
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ${{ secrets.AWS_REGION }}
-
-      - name: Log in to AWS ECR
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t innvoicer-api-prod .
-          docker tag innvoicer-api-prod:latest 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
-          docker push 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
-
-      - name: Generate SSH key pair
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""  # Generate SSH key pair without a passphrase
-
-      - name: Get Availability Zone
-        id: get_az
-        run: |
-          AZ=$(aws ec2 describe-availability-zones --region ${{ secrets.AWS_REGION }} --query "AvailabilityZones[0].ZoneName" --output text)
-          echo "::set-output name=AZ::$AZ"
-
-      - name: Send SSH Public Key to EC2 Instance
-        run: |
-          # Get the public key
-          PUBLIC_KEY=$(cat ~/.ssh/id_rsa.pub)
-          
-          # Send the SSH public key to EC2 Instance Connect
-          aws ec2-instance-connect send-ssh-public-key \
-            --region ${{ secrets.AWS_REGION }} \
-            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
-            --instance-os-user ubuntu \
-            --availability-zone ${{ steps.get_az.outputs.AZ }} \
-            --ssh-public-key "$PUBLIC_KEY"
-
-      - name: Deploy to EC2 using SSH
-        run: |
-          # Debugging step: Check if the private key exists
-          ls -l ~/.ssh
-          cat ~/.ssh/id_rsa
-          
-          # Execute commands over SSH using EC2 Instance Connect
-          ssh -v -o StrictHostKeyChecking=no -T -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
-            # Log in to ECR on EC2
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-
-            # Stop and remove existing container (if running)
-            docker stop innvoicer-api-prod || true
-            docker rm innvoicer-api-prod || true
-
-            # Pull latest image
-            docker pull 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod:latest
-
-            # Run new container
-            docker run -d -p 8080:8080 --name innvoicer-api-prod 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod:latest
-
-            # Cleanup old images
-            docker system prune -f
-          EOF
+   deploy:
+     runs-on: ubuntu-latest
+ 
+     steps:
+       - name: Checkout Code
+         uses: actions/checkout@v3
+ 
+       - name: Log in to AWS ECR
+         run: |
+           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws configure set region ${{ secrets.AWS_REGION }}
+           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+ 
+       - name: Build and Push Docker Image
+         run: |
+           docker build -t innvoicer-api-prod .
+           docker tag innvoicer-api-prod:latest 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+           docker push 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+ 
+       - name: Deploy to EC2
+         uses: appleboy/ssh-action@v0.1.10
