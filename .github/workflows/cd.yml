@@ -32,12 +32,12 @@ jobs:
           docker push 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
           
       - name: Pull Docker image
-        run: sudo docker pull 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
+        run: docker pull 832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
 
       - name: Delete Old docker container
-        run: sudo docker rm -f innvoicer-api-prod-container || true
+        run: rm -f innvoicer-api-prod-container || true
 
       - name: Run Docker Container
         run: |
-          sudo docker run -d -p 8080:8080 --name innvoicer-api-prod-container \
+          docker run -d -p 8080:8080 --name innvoicer-api-prod-container \
           832753618517.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/innvoicer-api-prod
