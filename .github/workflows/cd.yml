@@ -1,4 +1,4 @@
-name: Deploy to EC2 using EC2 Instance Connect
+name: TEST Deploy to EC2 using EC2 Instance Connect
 
 on:
   push:
