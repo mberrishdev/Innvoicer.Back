@@ -1,1 +1,1 @@
-https://innvoicer-api.azurewebsites.net/swagger
+]]https://innvoicer-api.azurewebsites.net/swagger
