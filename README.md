@@ -1,1 +1,1 @@
-]]https://innvoicer-api.azurewebsites.net/swagger
+[https://innvoicer-api.tianshan.space](https://innvoicer-api.tianshan.space/swagger/index.html)
