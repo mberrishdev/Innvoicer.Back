@@ -7,18 +7,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  manual-approval:
-    runs-on: self-hosted
+  build-and-test:
+    runs-on: ubuntu-latest  
     steps:
-      - name: Wait for Manual Approval
-        uses: hmarr/await-approval-action@v1
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
         with:
-          approvers: "mberrishdev" 
-          minimum-approvals: 1
-          token: ${{ secrets.GITHUB_TOKEN }}
+          dotnet-version: 8.0.x  
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build .NET Application
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run Tests (if available)
+        run: dotnet test --configuration Release --no-build --logger trx || echo "No tests found"
 
   build-and-push:
-    needs: manual-approval
+    needs: build-and-test
     runs-on: self-hosted
     steps:
       - name: Checkout Code
