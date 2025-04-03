@@ -30,7 +30,7 @@ public class PublishInvoiceCommandHandler(IRepository<Invoice> repository, ISmsS
 
         invoice.Publish(command);
 
-        var invoiceUrl = $"https://innvoicer.com/invoice/{invoice.Key}";
+        var invoiceUrl = $"https://innvoicer.tianshan.space/invoice/{invoice.Key}";
         var message = $"{invoice.Company.Name} sent you an invoice. View it here: {invoiceUrl}";
 
         if (invoice.Client.Phone != null)
