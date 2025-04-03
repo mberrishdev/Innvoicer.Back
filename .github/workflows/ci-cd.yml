@@ -3,7 +3,7 @@ name: TEST Deploy to EC2 using EC2 Instance Connect
 on:
   push:
     tags:
-      - '*'
+      - 'v*'
       
   workflow_dispatch:
 
