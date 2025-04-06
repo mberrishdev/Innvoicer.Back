@@ -24,7 +24,7 @@ public class GetInvoicesByKeyQueryHandler(IQueryRepository<Invoice> repository)
         };
 
         //todo check if company is user company
-        var invoice = await repository.GetAsync(predicate: x => x.Key == request.Key && x.Status == InvoiceStatus.Pending, rp,
+        var invoice = await repository.GetAsync(predicate: x => x.Key == request.Key && x.Status != InvoiceStatus.Deleted, rp,
                           cancellationToken: cancellationToken) ??
                       throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Key), request.Key);
 
