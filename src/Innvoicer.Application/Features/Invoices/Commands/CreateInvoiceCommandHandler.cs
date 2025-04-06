@@ -1,4 +1,5 @@
 using Common.Repository.Repository;
+using Innvoicer.Application.Features.Companies.Queries;
 using Innvoicer.Application.Helpers;
 using Innvoicer.Domain.Entities.Invoices;
 using Innvoicer.Domain.Entities.Invoices.Commands;
@@ -11,7 +12,8 @@ public class CreateInvoiceCommandHandler(IRepository<Invoice> repository, IMedia
 {
     public async Task<long> Handle(CreateInvoiceCommand command, CancellationToken cancellationToken)
     {
-        //todo check companyId
+        await mediator.Send(new CheckCompanyExistQuery(command.CompanyId), cancellationToken);
+        
         var lastInvoice =
             await repository.GetAsync(x => x.CompanyId == command.CompanyId, cancellationToken: cancellationToken);
         command.Number = lastInvoice?.Number?.ToString() ?? 1.ToString();

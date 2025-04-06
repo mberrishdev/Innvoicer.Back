@@ -7,7 +7,6 @@ namespace Innvoicer.Domain.Entities.Invoices.Commands;
 public class UpdateInvoiceCommand : CommandBase
 {
     [JsonIgnore] public long Id { get; set; }
-    public long CompanyId { get; set; }
 
     public DateTime IssueDate { get; set; }
 

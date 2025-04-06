@@ -1,5 +1,6 @@
 using Common.Repository.Repository;
 using Innvoicer.Application.Exceptions;
+using Innvoicer.Application.Features.Companies.Queries;
 using Innvoicer.Application.Helpers;
 using Innvoicer.Domain.Entities.Invoices;
 using Innvoicer.Domain.Entities.Invoices.Commands;
@@ -20,14 +21,12 @@ public class UpdateInvoiceCommandHandler(IRepository<Invoice> repository, IMedia
             x => x.Include(invoice => invoice.Client),
         };
 
+        var invoice =
+            await repository.GetForUpdateAsync(x => x.Id == command.Id, rp, cancellationToken: cancellationToken)
+            ?? throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), command.Id);
 
-        var invoice = await repository.GetForUpdateAsync(x => x.Id == command.Id, rp, cancellationToken: cancellationToken)
-                      ?? throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), command.Id);
-
-        
-        //todo check status
-
-        //todo check companyId
+        if (invoice.Status != InvoiceStatus.Draft)
+            throw new CommandValidationException("Invoice is not in draft status");
 
         invoice.Update(command);
 

@@ -1,11 +1,8 @@
 using Common.Repository.Repository;
 using Innvoicer.Application.Exceptions;
-using Innvoicer.Application.Helpers;
 using Innvoicer.Domain.Entities.Invoices;
 using Innvoicer.Domain.Entities.Invoices.Commands;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace Innvoicer.Application.Features.Invoices.Commands;
 
@@ -17,8 +14,8 @@ public class DeleteInvoiceCommandHandler(IRepository<Invoice> repository, IMedia
         var invoice = await repository.GetForUpdateAsync(x => x.Id == command.Id, cancellationToken: cancellationToken)
                       ?? throw new ObjectNotFoundException(nameof(Invoice), nameof(Invoice.Id), command.Id);
 
-        
-        //todo check status
+        if (invoice.Status != InvoiceStatus.Draft)
+            throw new CommandValidationException("Invoice is not in draft status");
 
         invoice.Delete(command);
 

@@ -51,7 +51,6 @@ public class Invoice : Entity<long>
 
     public void Update(UpdateInvoiceCommand command)
     {
-        CompanyId = command.CompanyId;
         IssueDate = command.IssueDate;
         DueDate = command.DueDate;
         DepositAmount = command.DepositAmount;
