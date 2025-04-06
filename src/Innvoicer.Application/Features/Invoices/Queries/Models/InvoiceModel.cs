@@ -65,6 +65,7 @@ public class ClientModel
 
 public class InvoiceItemModel
 {
+    public long Id { get; set; }
     public string Name { get; set; }
     public decimal UnitPrice { get; set; }
     public int Quantity { get; set; }
@@ -78,6 +79,7 @@ public class InvoiceItemModel
 
     public InvoiceItemModel(InvoiceItem item)
     {
+        Id = item.Id;
         Name = item.Name;
         UnitPrice = item.UnitPrice;
         Quantity = item.Quantity;
