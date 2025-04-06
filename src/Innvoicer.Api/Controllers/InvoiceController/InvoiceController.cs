@@ -74,8 +74,8 @@ public class InvoiceController(IMediator mediator) : ApiControllerBase(mediator)
     }
 
     [HttpPut("publish/{id:long}")]
-    [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
-    public async Task<ActionResult<InvoiceModel>> Publish([Required, FromRoute] long id,
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Publish([Required, FromRoute] long id,
         CancellationToken cancellationToken)
     {
         await Mediator.Send(new PublishInvoiceCommand() { Id = id, UserModel = UserModel },
@@ -84,8 +84,8 @@ public class InvoiceController(IMediator mediator) : ApiControllerBase(mediator)
     }
 
     [HttpPut("complete/{id:long}")]
-    [ProducesResponseType(typeof(InvoiceModel), StatusCodes.Status200OK)]
-    public async Task<ActionResult<InvoiceModel>> Complete([Required, FromRoute] long id,
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult> Complete([Required, FromRoute] long id,
         CancellationToken cancellationToken)
     {
         await Mediator.Send(new CompleteInvoiceCommand() { Id = id, UserModel = UserModel },
