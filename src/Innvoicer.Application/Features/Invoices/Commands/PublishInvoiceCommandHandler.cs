@@ -34,7 +34,7 @@ public class PublishInvoiceCommandHandler(IRepository<Invoice> repository, ISmsS
         var message = $"{invoice.Company.Name} sent you an invoice. View it here: {invoiceUrl}";
 
         if (invoice.Client.Phone != null)
-            await smsService.SendSms(message, "+995", invoice.Client.Phone, cancellationToken);
+            await smsService.SendSms(message, "995", invoice.Client.Phone, cancellationToken);
 
         await repository.UpdateAsync(invoice, cancellationToken);
     }
