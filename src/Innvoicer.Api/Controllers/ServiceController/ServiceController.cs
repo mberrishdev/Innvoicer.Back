@@ -18,7 +18,7 @@ namespace Innvoicer.Api.Controllers.ServiceController;
 [ApiController]
 [ApiVersion("1.0")]
 [Authorize]
-[Route("v{version:apiVersion}/company")]
+[Route("v{version:apiVersion}/service")]
 public class ServiceController(IMediator mediator) : ApiControllerBase(mediator)
 {
     [HttpGet("{companyId:long}")]
